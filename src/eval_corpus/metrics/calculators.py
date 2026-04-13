@@ -211,3 +211,41 @@ def compute_metric_06(
         threshold=threshold or MetricThreshold(warn_min=0.80, pass_min=0.95),
         not_applicable_reasons=["no_applicable_chunks"] if denominator == 0 else [],
     )
+
+
+def compute_metric_07_semantic_completeness(
+    chunks: list[Chunk],
+    *,
+    threshold: MetricThreshold | None = None,
+) -> MetricResult:
+    """METR-07 语义完整率（规则自动评分）."""
+    checked = _validated_chunks(chunks)
+    applicable = [c for c in checked if c.text.strip()]
+    not_applicable_reasons: list[str] = []
+    excluded_count = len(checked) - len(applicable)
+    if excluded_count > 0:
+        not_applicable_reasons.append("empty_text")
+
+    # Rule-first score: text is considered semantically complete when it ends
+    # with natural sentence punctuation and has minimal informative length.
+    numerator = 0
+    for chunk in applicable:
+        text = chunk.text.strip()
+        if len(text) < 8:
+            continue
+        if text.endswith(_PUNCT_ENDINGS):
+            numerator += 1
+    denominator = len(applicable)
+    if denominator == 0:
+        not_applicable_reasons.append("no_applicable_chunks")
+
+    return _build_result(
+        "METR-07",
+        numerator=numerator,
+        denominator=denominator,
+        excluded_count=excluded_count,
+        applicable_count=len(applicable),
+        total_count=len(checked),
+        threshold=threshold or MetricThreshold(warn_min=0.75, pass_min=0.90),
+        not_applicable_reasons=not_applicable_reasons,
+    )
