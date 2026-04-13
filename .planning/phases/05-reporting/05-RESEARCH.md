@@ -216,17 +216,13 @@ assert set(payload.keys()) == {"per_file", "per_tool", "overall"}
 | A1 | `random` + 固定 seed 足以满足 DATA-01 可复现需求 | Standard Stack / Pitfalls | 若样本构造含外部依赖，可能需要更严格伪随机策略 |
 | A2 | Phase 5 无需引入 pandas/Jinja2 即可满足四格式导出 | Alternatives Considered | 若 HTML/表格复杂度升高，开发效率可能下降 |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **RPT-01 总对比表的列排序是否固定为 METR-01..07？**
-   - What we know: 七项指标集合已固定，且需跨格式一致。
-   - What's unclear: 是否有业务优先顺序（例如先覆盖类再语义类）。
-   - Recommendation: 在 PLAN 中锁定一份 canonical sort order 并写入测试。
+1. **RPT-01 总对比表的列排序是否固定为 METR-01..07？**  
+   **RESOLVED:** 固定 canonical 顺序为 `METR-01` → `METR-07`，所有导出格式必须保持同序并由测试断言。
 
-2. **RPT-03 的 git commit 在“非 git 环境/脏工作区”如何展示？**
-   - What we know: 需求要求可追溯元信息。
-   - What's unclear: 提交哈希取不到时的降级字段规范。
-   - Recommendation: 约定 `git_commit: null` + `git_status: dirty|clean|unavailable`。
+2. **RPT-03 的 git commit 在“非 git 环境/脏工作区”如何展示？**  
+   **RESOLVED:** 统一降级规范：`git_commit: null`，并输出 `git_status: clean|dirty|unavailable`；不得因 git 不可用导致报表失败。
 
 ## Environment Availability
 
