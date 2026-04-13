@@ -90,3 +90,36 @@ def test_metric_fields_keep_raw_threshold_level() -> None:
     assert "raw_value" in metric
     assert "threshold" in metric
     assert "level" in metric
+
+
+def test_per_file_metrics_do_not_reuse_single_template_across_files() -> None:
+    chunks = _sample_chunks()
+    per_file = build_per_file_metrics(chunks, _metric_map(chunks), errors=[])
+
+    by_file = {item["file"]: item for item in per_file}
+    assert set(by_file.keys()) == {"a.pdf", "b.pdf"}
+
+    a_raw = by_file["a.pdf"]["metrics"]["METR-04"]["raw_value"]
+    b_raw = by_file["b.pdf"]["metrics"]["METR-04"]["raw_value"]
+    assert a_raw != b_raw
+
+
+def test_overall_runtime_error_count_uses_aggregated_errors() -> None:
+    chunks = _sample_chunks()
+    per_file = build_per_file_metrics(
+        chunks,
+        errors=[
+            {"source_file": "a.pdf", "parser_tool": "paddle"},
+            {"source_file": "a.pdf", "parser_tool": "paddle"},
+        ],
+    )
+    per_tool = build_per_tool_metrics(per_file)
+
+    overall = build_overall_metrics(
+        per_file,
+        per_tool,
+        runtime_metadata={"error_count": 999, "extra": "keep"},
+    )
+
+    assert overall["runtime_metadata"]["error_count"] == 2
+    assert overall["runtime_metadata"]["extra"] == "keep"

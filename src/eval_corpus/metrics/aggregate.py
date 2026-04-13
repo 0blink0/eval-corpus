@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any
 
@@ -44,9 +45,38 @@ def _calculate_metrics_for_file(chunks: list[Chunk]) -> MetricMap:
     return {name: fn(chunks).model_dump() for name, fn in _metric_functions().items()}
 
 
+def _resolve_metrics_for_group(
+    metrics_template: dict[Any, MetricMap] | MetricMap | None,
+    source_file: str,
+    parser_tool: str,
+    file_chunks: list[Chunk],
+) -> MetricMap:
+    """Resolve metrics for one (file, tool) group safely.
+
+    A single MetricMap template (METR-* keys) is intentionally ignored to avoid
+    cross-file metric reuse. Per-group templates can be passed as a mapping with
+    keys like (source_file, parser_tool) or "source_file::parser_tool".
+    """
+    if metrics_template is None:
+        return _calculate_metrics_for_file(file_chunks)
+
+    if isinstance(metrics_template, dict):
+        if all(str(key).startswith("METR-") for key in metrics_template.keys()):
+            return _calculate_metrics_for_file(file_chunks)
+
+        tuple_key = (source_file, parser_tool)
+        str_key = f"{source_file}::{parser_tool}"
+        if tuple_key in metrics_template:
+            return deepcopy(metrics_template[tuple_key])
+        if str_key in metrics_template:
+            return deepcopy(metrics_template[str_key])
+
+    return _calculate_metrics_for_file(file_chunks)
+
+
 def build_per_file_metrics(
     chunks: list[Chunk],
-    metrics_template: MetricMap | None = None,
+    metrics_template: dict[Any, MetricMap] | MetricMap | None = None,
     *,
     errors: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
@@ -61,7 +91,9 @@ def build_per_file_metrics(
 
     per_file: list[dict[str, Any]] = []
     for (source_file, parser_tool), file_chunks in sorted(grouped.items()):
-        metrics = metrics_template or _calculate_metrics_for_file(file_chunks)
+        metrics = _resolve_metrics_for_group(
+            metrics_template, source_file, parser_tool, file_chunks
+        )
         not_applicable = sum(
             1 for metric in metrics.values() if metric.get("raw_value", None) is None
         )
@@ -109,15 +141,16 @@ def build_overall_metrics(
     runtime_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     metrics_summary = _summarize_metric_rows([r["metrics"] for r in per_file])
+    merged_runtime = {
+        **(runtime_metadata or {}),
+        "tool_count": len(per_tool),
+        "file_count": len(per_file),
+        "error_count": sum(r["errors"] for r in per_file),
+    }
     return {
         "metrics_summary": metrics_summary,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "runtime_metadata": {
-            "tool_count": len(per_tool),
-            "file_count": len(per_file),
-            "error_count": sum(r["errors"] for r in per_file),
-            **(runtime_metadata or {}),
-        },
+        "runtime_metadata": merged_runtime,
     }
 
 
