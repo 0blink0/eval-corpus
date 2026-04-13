@@ -13,6 +13,7 @@ from eval_corpus.chunker import chunk_blocks
 from eval_corpus.config import ConfigError, resolve_corpus_root
 from eval_corpus.ir_models import ChunkConfig
 from eval_corpus.manifest import build_manifest_payload, write_manifest
+from eval_corpus.metrics_io import build_metrics_artifact, read_adapter_summary_json, write_metrics_json
 from eval_corpus.scan import collect_corpus_files, normalize_extra_exts
 from eval_corpus.stats import aggregate_golden_stats, write_stats_json
 
@@ -189,6 +190,27 @@ def adapt(
     )
     if result["errors"] and fail_fast:
         raise typer.Exit(1)
+
+
+@app.command("metrics")
+def metrics(
+    input_path: Path = typer.Option(..., "--input", help="Adapter summary JSON input path."),
+    out_path: Path = typer.Option(..., "--out", help="Metrics artifact JSON output path."),
+) -> None:
+    """Build one metrics JSON artifact from adapter summary."""
+    if not input_path.is_file():
+        typer.secho(f"Input file not found: {input_path}", err=True)
+        raise typer.Exit(2)
+
+    adapter_summary = read_adapter_summary_json(input_path)
+    payload = build_metrics_artifact(adapter_summary)
+    write_metrics_json(out_path, payload)
+
+    typer.secho(
+        f"tools={len(payload['per_tool'])} files={len(payload['per_file'])} "
+        f"errors={payload['overall']['runtime_metadata']['error_count']}",
+        err=True,
+    )
 
 
 def run() -> None:
