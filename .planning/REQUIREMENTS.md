@@ -24,7 +24,7 @@
 
 ### 鎶ュ憡涓庝骇鐗?(RPT)
 
-- [ ] **RPT-01**: 鐢熸垚**鎬诲姣旇〃**锛堜笁宸ュ叿 脳 涓冩寚鏍囷紝闄勭洰鏍囬槇鍊煎垪锛?- [ ] **RPT-02**: 鐢熸垚**姣忓伐鍏锋槑缁?*锛堝師濮嬫寚鏍?JSON/CSV + Markdown 鎴?HTML 鎽樿锛?- [ ] **RPT-03**: 鍗曟杩愯鍐欏叆鏃堕棿鎴炽€佸伐鍏风増鏈€丟it commit锛堣嫢鏈夛級锛屼繚璇佸彲杩芥函
+- [x] **RPT-01**: 鐢熸垚**鎬诲姣旇〃**锛堜笁宸ュ叿 脳 涓冩寚鏍囷紝闄勭洰鏍囬槇鍊煎垪锛?- [x] **RPT-02**: 鐢熸垚**姣忓伐鍏锋槑缁?*锛堝師濮嬫寚鏍?JSON/CSV + Markdown 鎴?HTML 鎽樿锛?- [x] **RPT-03**: 鍗曟杩愯鍐欏叆鏃堕棿鎴炽€佸伐鍏风増鏈€丟it commit锛堣嫢鏈夛級锛屼繚璇佸彲杩芥函
 
 ### 娴嬭瘯鏁版嵁涓庤妯″寲 (DATA)
 
@@ -62,9 +62,9 @@
 | METR-05 | Phase 4 | Complete |
 | METR-06 | Phase 4 | Complete |
 | METR-07 | Phase 4 | Complete |
-| RPT-01 | Phase 5 | Pending |
-| RPT-02 | Phase 5 | Pending |
-| RPT-03 | Phase 5 | Pending |
+| RPT-01 | Phase 5 | Complete |
+| RPT-02 | Phase 5 | Complete |
+| RPT-03 | Phase 5 | Complete |
 | DATA-01 | Phase 5 | Pending |
 | DATA-02 | Phase 5 | Pending |
 

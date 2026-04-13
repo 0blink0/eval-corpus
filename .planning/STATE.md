@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Phase 5 context gathered
-last_updated: "2026-04-13T09:48:41.870Z"
+status: Executing Phase 5
+stopped_at: Completed 05-reporting-01-PLAN.md
+last_updated: "2026-04-13T09:55:31.686Z"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 15
-  completed_plans: 12
-  percent: 80
+  completed_plans: 13
+  percent: 87
 ---
 
 # Project State
@@ -24,7 +24,7 @@ Phase 5 — Ready to plan
 See: `.planning/PROJECT.md` (updated 2026-04-13)
 
 **Core value:** 同一套分块与评测口径下对比 PaddleOCR / GLM-OCR / MinerU 的分块质量，产出可复现的对比表与分项结果。  
-**Current focus:** Phase 5 — 报告、测试数据与批跑
+**Current focus:** Phase 5 — reporting
 
 ## Notes
 
@@ -40,6 +40,8 @@ See: `.planning/PROJECT.md` (updated 2026-04-13)
 - [Phase 04-metrics]: 人工复核记录与 auto_score 分离存储，避免覆盖自动分值。
 - [Phase 04-metrics]: Phase 4 输出统一为单一 JSON 工件，仅暴露 per_file/per_tool/overall 三层接口。
 - [Phase 04-metrics]: 聚合层保留 raw_value/threshold/level 与 applicable/not_applicable/errors 统计，避免下游丢失审计信息。
+- [Phase 05-reporting]: 报告层只消费 per_file/per_tool/overall 工件，不在报告层重算指标。
+- [Phase 05-reporting]: 四格式导出统一复用同一行级数据集并对 HTML 文本做 escape。
 
 ## Performance Metrics
 
@@ -47,6 +49,6 @@ See: `.planning/PROJECT.md` (updated 2026-04-13)
 
 ## Session Continuity
 
-Last session: 2026-04-13T09:38:30.786Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-reporting/05-CONTEXT.md
+Last session: 2026-04-13T09:55:31.680Z
+Stopped at: Completed 05-reporting-01-PLAN.md
+Resume file: None
