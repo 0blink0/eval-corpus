@@ -28,8 +28,8 @@
 
 ### 娴嬭瘯鏁版嵁涓庤妯″寲 (DATA)
 
-- [ ] **DATA-01**: 鎻愪緵鍚堟垚鎴栧皬鏍锋湰鐢熸垚鍣紝鐢ㄤ簬鏃犵湡鏂欐椂鐨勫洖褰掍笌 CI 鐑熸祴
-- [ ] **DATA-02**: 鏀寔鎵瑰鐞嗘ā寮忥紙鐩綍閫掑綊锛夛紝渚夸簬浜戜富鏈轰笂鎵╄窇
+- [x] **DATA-01**: 鎻愪緵鍚堟垚鎴栧皬鏍锋湰鐢熸垚鍣紝鐢ㄤ簬鏃犵湡鏂欐椂鐨勫洖褰掍笌 CI 鐑熸祴
+- [x] **DATA-02**: 鏀寔鎵瑰鐞嗘ā寮忥紙鐩綍閫掑綊锛夛紝渚夸簬浜戜富鏈轰笂鎵╄窇
 
 ## v2 Requirements
 
@@ -65,8 +65,8 @@
 | RPT-01 | Phase 5 | Complete |
 | RPT-02 | Phase 5 | Complete |
 | RPT-03 | Phase 5 | Complete |
-| DATA-01 | Phase 5 | Pending |
-| DATA-02 | Phase 5 | Pending |
+| DATA-01 | Phase 5 | Complete |
+| DATA-02 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total
