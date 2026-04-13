@@ -17,9 +17,9 @@
 - [x] **ADPT-01**: PaddleOCR 閾捐矾锛氫粠璇枡鍒?`ParsedBlock[]` 鐨勫彲杩愯閫傞厤锛堢増鏈笌渚濊禆鍐欏叆 README/lock锛?- [x] **ADPT-02**: GLM-OCR 閾捐矾锛氬悓涓?- [x] **ADPT-03**: MinerU 閾捐矾锛氬悓涓?
 ### 鎸囨爣璁＄畻 (METR)
 
-- [ ] **METR-01**: **瑕嗙洊瀹屾暣鐜?*锛氬垎鍧楄繕鍘熸枃鏈笌鍘熸彁鍙栧叏鏂囬暱搴︽瘮鍙婄己澶辫瘖鏂?- [ ] **METR-02**: **鍧楅暱搴﹁揪鏍囩巼**锛?00鈥?000 瀛楃鍗犳瘮缁熻
-- [ ] **METR-03**: **杈圭晫鍑嗙‘鐜?* / 纭垏姣斾緥锛氳竟鐣岃惤鍦ㄥ彞鏈?娈垫湯 vs 纭垏
-- [ ] **METR-04**: **琛ㄦ牸淇濇寔鐜?*锛氬畬鏁磋〃鏍煎潡鏁?/ 鍘熻〃鏍兼暟锛堝師琛ㄦ牸鏁版潵鑷綊涓€闃舵鏍囨敞锛?- [ ] **METR-05**: **閲嶅彔鍚堢悊鐜?*锛氱浉閭绘枃鏈潡閲嶅彔姣斾緥钀藉湪 10鈥?0% 鐨勫崰姣?- [ ] **METR-06**: **鍏冩暟鎹畬鏁寸巼**锛歝hunk 鍚屾椂鍏峰椤电爜涓庢爣棰樿矾寰勶紙鎴栧彲瑙ｉ噴缂哄け鍘熷洜锛夌殑鍗犳瘮
+- [x] **METR-01**: **瑕嗙洊瀹屾暣鐜?*锛氬垎鍧楄繕鍘熸枃鏈笌鍘熸彁鍙栧叏鏂囬暱搴︽瘮鍙婄己澶辫瘖鏂?- [x] **METR-02**: **鍧楅暱搴﹁揪鏍囩巼**锛?00鈥?000 瀛楃鍗犳瘮缁熻
+- [x] **METR-03**: **杈圭晫鍑嗙‘鐜?* / 纭垏姣斾緥锛氳竟鐣岃惤鍦ㄥ彞鏈?娈垫湯 vs 纭垏
+- [x] **METR-04**: **琛ㄦ牸淇濇寔鐜?*锛氬畬鏁磋〃鏍煎潡鏁?/ 鍘熻〃鏍兼暟锛堝師琛ㄦ牸鏁版潵鑷綊涓€闃舵鏍囨敞锛?- [x] **METR-05**: **閲嶅彔鍚堢悊鐜?*锛氱浉閭绘枃鏈潡閲嶅彔姣斾緥钀藉湪 10鈥?0% 鐨勫崰姣?- [x] **METR-06**: **鍏冩暟鎹畬鏁寸巼**锛歝hunk 鍚屾椂鍏峰椤电爜涓庢爣棰樿矾寰勶紙鎴栧彲瑙ｉ噴缂哄け鍘熷洜锛夌殑鍗犳瘮
 - [ ] **METR-07**: **璇箟瀹屾暣鐜?*锛氭寜 PROJECT 绾﹀畾鎵ц锛堣鍒欒繎浼?+ 鍙鐜版娊妫€鑴氭湰锛屾敮鎸佹帴鍏?LLM-as-Judge 鍙€夛級
 
 ### 鎶ュ憡涓庝骇鐗?(RPT)
@@ -55,12 +55,12 @@
 | ADPT-01 | Phase 3 | Done |
 | ADPT-02 | Phase 3 | Done |
 | ADPT-03 | Phase 3 | Done |
-| METR-01 | Phase 4 | Pending |
-| METR-02 | Phase 4 | Pending |
-| METR-03 | Phase 4 | Pending |
-| METR-04 | Phase 4 | Pending |
-| METR-05 | Phase 4 | Pending |
-| METR-06 | Phase 4 | Pending |
+| METR-01 | Phase 4 | Complete |
+| METR-02 | Phase 4 | Complete |
+| METR-03 | Phase 4 | Complete |
+| METR-04 | Phase 4 | Complete |
+| METR-05 | Phase 4 | Complete |
+| METR-06 | Phase 4 | Complete |
 | METR-07 | Phase 4 | Pending |
 | RPT-01 | Phase 5 | Pending |
 | RPT-02 | Phase 5 | Pending |
