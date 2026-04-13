@@ -12,13 +12,13 @@
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ 建立可复现的语料目录约定与清单（含北燃归档资料路径约定）— Phase 1
+- ✓ 实现统一中间表示与统一分块器（300–1000 字符、10–20% 重叠约束）— Phase 2
+- ✓ 接入 PaddleOCR、GLM-OCR、MinerU 三套解析并归一到中间表示 — Phase 3
+- ✓ 按 §1 实现七项分块指标（语义、覆盖、边界、长度、元数据、表格、重叠）并完成阈值对照 — Phase 4
 
 ### Active
 
-- [ ] 建立可复现的语料目录约定与清单（含北燃归档资料；若路径不在仓库内则记录绝对路径或挂载说明）
-- [ ] 实现统一中间表示（段落/标题/表格/页码等）与**统一分块器**（见下节策略摘要）
-- [ ] 接入 PaddleOCR、GLM-OCR、MinerU 三套解析，并归一到中间表示
 - [ ] 按 §1 实现七项分块指标：**语义完整率、覆盖完整率、边界准确率、块长度达标率、元数据完整率、表格保持率、重叠合理率**（含目标阈值对照）
 - [ ] 自动生成**对比总表** + **每工具明细结果**（可机器可读 JSON/CSV + 人类可读 Markdown/HTML）
 - [ ] 提供测试数据生成能力（合成样例或统计用基准，用于回归与小规模压测）
@@ -68,9 +68,10 @@
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| 统一 IR + 统一分块后再比指标 | 消除各工具原生分块差异带来的不公平 | — Pending |
-| 文本 chunk 15% 重叠、表格块原子 | 对齐 §1「重叠合理率」「表格保持率」 | — Pending |
-| 语料路径可配置（env/CLI） | 北燃资料未必在仓库内 | — Pending |
+| 统一 IR + 统一分块后再比指标 | 消除各工具原生分块差异带来的不公平 | ✅ 已落地（Phase 2） |
+| 文本 chunk 15% 重叠、表格块原子 | 对齐 §1「重叠合理率」「表格保持率」 | ✅ 已落地（Phase 2，配置区间 10–20%） |
+| 语料路径可配置（env/CLI） | 北燃资料未必在仓库内 | ✅ 已落地（Phase 1） |
+| 指标引擎采用严格口径（not_applicable 分流） | 保证结果可审计、可复现、可解释 | ✅ 已落地（Phase 4） |
 
 ## Evolution
 
@@ -90,4 +91,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-13 after initialization*
+*Last updated: 2026-04-13 after Phase 4 completion*

@@ -1,36 +1,39 @@
----
+﻿---
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-04-13T09:26:04.755Z"
+status: ready_to_plan
+current_phase: "5"
+current_phase_name: "报告、测试数据与批跑"
+current_plan: "Not started"
+stopped_at: Phase 4 complete, ready to discuss/plan Phase 5
+last_updated: "2026-04-13T10:05:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 12
+  total_plans: 15
   completed_plans: 12
-  percent: 100
+  percent: 80
 ---
 
 # Project State
 
 ## Current Phase
 
-Phase 4 — Executing
+Phase 5 — Ready to plan
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-04-13)
 
 **Core value:** 同一套分块与评测口径下对比 PaddleOCR / GLM-OCR / MinerU 的分块质量，产出可复现的对比表与分项结果。  
-**Current focus:** Phase 4 — metrics
+**Current focus:** Phase 5 — 报告、测试数据与批跑
 
 ## Notes
 
 - 语料目录：**北燃热力宣传品采购归档资料**（由用户在配置中提供实际路径）
 - 指标口径：`测试指标体系.md` §1 全部七项
-- 当前进度：Phase 1~3 已完成执行；Phase 4 已完成 discuss，待 plan
+- 当前进度：Phase 1~4 已完成执行；Phase 5 待 discuss/plan/execute
 
 ## Decisions
 
@@ -47,6 +50,6 @@ See: `.planning/PROJECT.md` (updated 2026-04-13)
 
 ## Session Continuity
 
-Last session: 2026-04-13T09:21:48.925Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-04-13
+Stopped at: Phase 4 complete, ready to discuss/plan Phase 5
 Resume file: None
