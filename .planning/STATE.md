@@ -1,17 +1,41 @@
-﻿# Project State
+﻿---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: ready_to_plan
+current_phase: "4"
+current_phase_name: "分块指标引擎"
+current_plan: "Not started"
+last_updated: "2026-04-13T09:40:00.000Z"
+progress:
+  total_phases: 5
+  completed_phases: 3
+  total_plans: 15
+  completed_plans: 9
+  percent: 60
+---
+
+# Project State
 
 ## Current Phase
 
-Phase 1 鈥?Executed (awaiting transition / Phase 2)
+Phase 4 — Ready to plan
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-04-13)
 
-**Core value:** 鍚屼竴濂楀垎鍧椾笌璇勬祴鍙ｅ緞涓嬪姣?PaddleOCR / GLM-OCR / MinerU 鐨勫垎鍧楄川閲忥紝浜у嚭鍙鐜扮殑瀵规瘮琛ㄤ笌鍒嗛」缁撴灉銆?
-**Current focus:** Phase 1 鈥?璇勬祴鍩哄骇涓庤鏂欒鑼?
+**Core value:** 同一套分块与评测口径下对比 PaddleOCR / GLM-OCR / MinerU 的分块质量，产出可复现的对比表与分项结果。  
+**Current focus:** Phase 4 — 分块指标引擎
+
 ## Notes
 
-- 璇枡鐩綍锛?*鍖楃噧鐑姏瀹ｄ紶鍝侀噰璐綊妗ｈ祫鏂?*锛堢敱鐢ㄦ埛鍦ㄩ厤缃腑鎻愪緵瀹為檯璺緞锛?- 鎸囨爣鍙ｅ緞锛歚娴嬭瘯鎸囨爣浣撶郴.md` 搂1 鍏ㄩ儴涓冮」
+- 语料目录：**北燃热力宣传品采购归档资料**（由用户在配置中提供实际路径）
+- 指标口径：`测试指标体系.md` §1 全部七项
+- 当前进度：Phase 1~3 已完成执行；Phase 4 已完成 discuss，待 plan
 
+## Session Continuity
 
+Last session: 2026-04-13
+Stopped at: Phase 4 context gathered
+Resume file: `.planning/phases/04-metrics/04-CONTEXT.md`
