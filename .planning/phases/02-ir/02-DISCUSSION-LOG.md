@@ -10,9 +10,9 @@
 
 ## ParsedBlock 建模与序列化
 
-**User's choice:** 全部 → 采用推荐项 **dataclass + json、snake_case、table 必含 text 可选 cells、parser_tool 默认 `"unknown"`**
+**User's choice:** 全部 → 初始推荐项 **dataclass + json**；**2026-04-13 用户修订为 Pydantic v2 BaseModel**（`model_validate_json` / `model_dump_json`），**D-16 以 CONTEXT 最新版为准**。
 
-**Notes:** 不强制 Pydantic。
+**Notes:** `pyproject.toml` 增加 `pydantic>=2`；其余 D-17～D-19 不变（snake_case、table.text、parser_tool 默认 `unknown`）。
 
 ---
 
@@ -40,4 +40,4 @@
 
 ## Deferred Ideas
 
-- Pydantic、独立包、流式分块、三工具映射（Phase 3）。
+- 独立包、流式分块、三工具映射（Phase 3）。

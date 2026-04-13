@@ -13,11 +13,11 @@
 <decisions>
 ## Implementation Decisions
 
-### 用户选择：四个讨论领域全部采用会话内「第一项推荐」
+### 用户选择：四个讨论领域初始采用会话内「第一项推荐」；**D-16 后改为 Pydantic**（见 specifics）
 
 ### ParsedBlock 建模与序列化（领域 1）
 
-- **D-16:** `ParsedBlock` 以 **Python `dataclass`** 为主模型；序列化使用 **标准库 `json`**（可辅以小型 `asdict`/转换函数），**不引入 Pydantic** 为硬依赖（除非后续阶段统一引入）。
+- **D-16:** `ParsedBlock` 与 Phase 2 输出的 **chunk** 模型以 **Pydantic v2 `BaseModel`** 为主；JSON 交换使用 **`TypeAdapter` / `model_validate_json` / `model_dump_json`**（或 `model_dump` + `json.dumps`，`ensure_ascii=False` 与 Phase 1 一致）；在 `pyproject.toml` 中将 **`pydantic>=2`** 列为**运行时依赖**。
 - **D-17:** 对外交换格式为 **JSON**；字段名 **snake_case**，与现有 `eval_corpus` / 清单风格一致。
 - **D-18:** `type ∈ {title, paragraph, table, other}`（与 PROJECT 一致）；`table` 块 **必须** 提供规范化 **`text`**（表格的线性化/可读文本）；可选扩展字段 **`cells`**（或等价嵌套结构）供后续表格保持率细化，**Phase 2 不强制**解析工具填充 `cells`。
 - **D-19:** `parser_tool` 在 Phase 2 允许占位；默认值为 **`"unknown"`**（字符串），Phase 3 适配器写入真实工具名与版本标识。
@@ -37,7 +37,7 @@
 
 ### 分块器对外接口（领域 4）
 
-- **D-27:** 分块核心实现为 **纯 Python API**（函数或类），输入 `ParsedBlock` 序列与配置，输出 chunk 列表（dataclass 或 Typed 结构 + JSON 序列化）。
+- **D-27:** 分块核心实现为 **纯 Python API**（函数或类），输入 **`list[ParsedBlock]`**（可由 JSON 校验得到）与配置，输出 **`list[Chunk]`**（Pydantic 模型）；序列化遵循 D-16。
 - **D-28:** 提供 Typer 子命令 **`chunk`**（挂在现有 `corpus-eval` 上）：例如 **`--blocks-in PATH`** 读入 `ParsedBlock[]` JSON，**`--chunks-out PATH`** 写出 chunk JSON；配置项 **`--min-chars` / `--max-chars` / `--overlap-ratio`**（默认值对齐 PROJECT：300、1000、0.15），范围校验与 CONTEXT 一致。
 - **D-29:** 单元测试以 **手工构造的 `ParsedBlock[]` 夹具**为主（ROADMAP 成功标准 1–2），不依赖真实 OCR 输出。
 
@@ -80,11 +80,12 @@
 ### Reusable Assets
 
 - `src/eval_corpus/cli.py` — 可注册 `chunk` 子命令，与 `manifest` / `stats` 并列
-- `pyproject.toml` — 已定义 `corpus-eval` 入口与 pytest
+- `pyproject.toml` — 已定义 `corpus-eval` 入口与 pytest；需增加 **`pydantic>=2`**
 
 ### Established Patterns
 
 - JSON 产物含 `schema_version`（Phase 1）；chunk 输出建议同样带 **`schema_version`**
+- Phase 2 起：IR/chunk 用 **Pydantic v2** 校验与导出；可选导出 **JSON Schema**（`model_json_schema`）供文档或 Phase 4 对照
 
 ### Integration Points
 
@@ -96,13 +97,14 @@
 ## Specific Ideas
 
 - 用户采用 **「全部」** 表示四个领域均讨论；选项一律取会话内已声明的 **第一项推荐**（见 DISCUSSION-LOG）。
+- **2026-04-13 修订：** 用户要求 **使用 Pydantic** 实现 `ParsedBlock` / chunk 模型，**取代**原 D-16 中的 **dataclass + 纯 json** 方案；其余 D-17～D-29 不变。
 
 </specifics>
 
 <deferred>
 ## Deferred Ideas
 
-- 引入 Pydantic / 独立分包 / 实时流式分块：未纳入 Phase 2。
+- 独立分包 / 实时流式分块：未纳入 Phase 2。
 - 三工具具体映射规则：属 Phase 3。
 
 ### Reviewed Todos (not folded)

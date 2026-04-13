@@ -59,13 +59,13 @@ def test_aggregate_totals(tmp_path: Path) -> None:
 def test_stats_cli_writes_golden_stats(tmp_path: Path, monkeypatch) -> None:
     (tmp_path / "a.txt").write_text("hello", encoding="utf-8")
     monkeypatch.chdir(tmp_path)
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
     out = tmp_path / "golden_stats.json"
     r = runner.invoke(
         app,
         ["stats", "--root", str(tmp_path), "--stats-out", str(out)],
     )
-    assert r.exit_code == 0, r.stdout + (r.stderr or "")
+    assert r.exit_code == 0, r.output
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["totals"]["total_unicode_chars"] == 5
-    assert "unicode_chars=" in r.stderr or "needs_ocr=" in r.stderr
+    assert "unicode_chars=" in r.output or "needs_ocr=" in r.output
