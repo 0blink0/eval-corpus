@@ -16,13 +16,13 @@
 - ✓ 实现统一中间表示与统一分块器（300–1000 字符、10–20% 重叠约束）— Phase 2
 - ✓ 接入 PaddleOCR、GLM-OCR、MinerU 三套解析并归一到中间表示 — Phase 3
 - ✓ 按 §1 实现七项分块指标（语义、覆盖、边界、长度、元数据、表格、重叠）并完成阈值对照 — Phase 4
+- ✓ 自动生成对比总表与每工具明细（JSON/CSV/Markdown/HTML）— Phase 5
+- ✓ 提供可复现合成数据生成能力（文本/扫描/表格）— Phase 5
+- ✓ 提供目录批跑入口并记录运行元信息（含失败阈值/重试策略）— Phase 5
 
 ### Active
 
-- [ ] 按 §1 实现七项分块指标：**语义完整率、覆盖完整率、边界准确率、块长度达标率、元数据完整率、表格保持率、重叠合理率**（含目标阈值对照）
-- [ ] 自动生成**对比总表** + **每工具明细结果**（可机器可读 JSON/CSV + 人类可读 Markdown/HTML）
-- [ ] 提供测试数据生成能力（合成样例或统计用基准，用于回归与小规模压测）
-- [ ] 记录运行环境与耗时，便于迁云扩缩
+- [ ] 评估是否将 §2–§6 指标扩展为后续里程碑（若单独立项）
 
 ### Out of Scope
 
@@ -91,4 +91,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-13 after Phase 4 completion*
+*Last updated: 2026-04-13 after Phase 5 completion*
