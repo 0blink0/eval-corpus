@@ -7,7 +7,10 @@ from typing import List, Optional
 
 import typer
 
+from eval_corpus.chunk_io import read_parsed_blocks_json, write_chunks_json
+from eval_corpus.chunker import chunk_blocks
 from eval_corpus.config import ConfigError, resolve_corpus_root
+from eval_corpus.ir_models import ChunkConfig
 from eval_corpus.manifest import build_manifest_payload, write_manifest
 from eval_corpus.scan import collect_corpus_files, normalize_extra_exts
 from eval_corpus.stats import aggregate_golden_stats, write_stats_json
@@ -119,6 +122,45 @@ def stats(
         f"unicode_chars={totals['total_unicode_chars']} "
         f"needs_ocr={totals['needs_ocr_files']} "
         f"scan_errors={len(errors)} unreadable={unreadable_count}",
+        err=True,
+    )
+
+
+@app.command()
+def chunk(
+    blocks_in: Path = typer.Option(
+        ...,
+        "--blocks-in",
+        help="Input ParsedBlock[] JSON path.",
+    ),
+    chunks_out: Path = typer.Option(
+        ...,
+        "--chunks-out",
+        help="Output Chunk[] JSON path.",
+    ),
+    min_chars: int = typer.Option(300, "--min-chars", help="Minimum target chars."),
+    max_chars: int = typer.Option(1000, "--max-chars", help="Maximum target chars."),
+    overlap_ratio: float = typer.Option(
+        0.15,
+        "--overlap-ratio",
+        help="Text overlap ratio in [0.10, 0.20].",
+    ),
+) -> None:
+    """Chunk ParsedBlock JSON into normalized chunk JSON."""
+    if min_chars <= 0 or max_chars < min_chars:
+        typer.secho("Invalid min/max chars: require 0 < min_chars <= max_chars.", err=True)
+        raise typer.Exit(2)
+    if not (0.10 <= overlap_ratio <= 0.20):
+        typer.secho("Invalid --overlap-ratio: must be within [0.10, 0.20].", err=True)
+        raise typer.Exit(2)
+
+    blocks = read_parsed_blocks_json(blocks_in)
+    cfg = ChunkConfig(min_chars=min_chars, max_chars=max_chars, overlap_ratio=overlap_ratio)
+    chunks = chunk_blocks(blocks, cfg)
+    write_chunks_json(chunks_out, chunks)
+    typer.secho(
+        f"blocks={len(blocks)} chunks={len(chunks)} "
+        f"min_chars={min_chars} max_chars={max_chars} overlap_ratio={overlap_ratio}",
         err=True,
     )
 

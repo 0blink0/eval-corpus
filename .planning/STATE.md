@@ -1,18 +1,16 @@
-# Project State
+﻿# Project State
 
 ## Current Phase
 
-Phase 1 — Executed (awaiting transition / Phase 2)
+Phase 1 鈥?Executed (awaiting transition / Phase 2)
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-04-13)
 
-**Core value:** 同一套分块与评测口径下对比 PaddleOCR / GLM-OCR / MinerU 的分块质量，产出可复现的对比表与分项结果。
-
-**Current focus:** Phase 1 — 评测基座与语料规范
-
+**Core value:** 鍚屼竴濂楀垎鍧椾笌璇勬祴鍙ｅ緞涓嬪姣?PaddleOCR / GLM-OCR / MinerU 鐨勫垎鍧楄川閲忥紝浜у嚭鍙鐜扮殑瀵规瘮琛ㄤ笌鍒嗛」缁撴灉銆?
+**Current focus:** Phase 1 鈥?璇勬祴鍩哄骇涓庤鏂欒鑼?
 ## Notes
 
-- 语料目录：**北燃热力宣传品采购归档资料**（由用户在配置中提供实际路径）
-- 指标口径：`测试指标体系.md` §1 全部七项
+- 璇枡鐩綍锛?*鍖楃噧鐑姏瀹ｄ紶鍝侀噰璐綊妗ｈ祫鏂?*锛堢敱鐢ㄦ埛鍦ㄩ厤缃腑鎻愪緵瀹為檯璺緞锛?- 鎸囨爣鍙ｅ緞锛歚娴嬭瘯鎸囨爣浣撶郴.md` 搂1 鍏ㄩ儴涓冮」
+
