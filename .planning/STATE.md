@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 4
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-04-13T09:08:24.030Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-04-13T09:21:48.933Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 12
-  completed_plans: 11
-  percent: 92
+  completed_plans: 12
+  percent: 100
 ---
 
 # Project State
@@ -38,6 +38,8 @@ See: `.planning/PROJECT.md` (updated 2026-04-13)
 - [04-metrics] 人工复核记录与 `auto_score` 分离存储，避免覆盖自动分值。
 - [Phase 04-metrics]: 语义完整率首版采用规则评分以保证可复现与可审计。
 - [Phase 04-metrics]: 人工复核记录与 auto_score 分离存储，避免覆盖自动分值。
+- [Phase 04-metrics]: Phase 4 输出统一为单一 JSON 工件，仅暴露 per_file/per_tool/overall 三层接口。
+- [Phase 04-metrics]: 聚合层保留 raw_value/threshold/level 与 applicable/not_applicable/errors 统计，避免下游丢失审计信息。
 
 ## Performance Metrics
 
@@ -45,6 +47,6 @@ See: `.planning/PROJECT.md` (updated 2026-04-13)
 
 ## Session Continuity
 
-Last session: 2026-04-13T09:08:07.606Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-04-13T09:21:48.925Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
