@@ -14,7 +14,7 @@
 - [x] **CHUNK-02**: 瀹炵幇缁熶竴鍒嗗潡鍣細鐩爣鍧楅暱 300鈥?000 瀛楃銆佽〃鏍间紭鍏堝師瀛愬潡銆佸彞鐣屼紭鍏堝垏鍒嗐€佸彲閰嶇疆閲嶅彔 10鈥?0%锛堥粯璁?15% 浜庢枃鏈潡锛?- [x] **CHUNK-03**: 鍚屼竴鍒嗗潡鍣ㄥ涓夊宸ュ叿褰掍竴鍚庣殑 `ParsedBlock[]` 鎵ц锛屼繚璇佸姣斿叕骞?
 ### 宸ュ叿閫傞厤 (ADPT)
 
-- [ ] **ADPT-01**: PaddleOCR 閾捐矾锛氫粠璇枡鍒?`ParsedBlock[]` 鐨勫彲杩愯閫傞厤锛堢増鏈笌渚濊禆鍐欏叆 README/lock锛?- [ ] **ADPT-02**: GLM-OCR 閾捐矾锛氬悓涓?- [ ] **ADPT-03**: MinerU 閾捐矾锛氬悓涓?
+- [x] **ADPT-01**: PaddleOCR 閾捐矾锛氫粠璇枡鍒?`ParsedBlock[]` 鐨勫彲杩愯閫傞厤锛堢増鏈笌渚濊禆鍐欏叆 README/lock锛?- [x] **ADPT-02**: GLM-OCR 閾捐矾锛氬悓涓?- [x] **ADPT-03**: MinerU 閾捐矾锛氬悓涓?
 ### 鎸囨爣璁＄畻 (METR)
 
 - [ ] **METR-01**: **瑕嗙洊瀹屾暣鐜?*锛氬垎鍧楄繕鍘熸枃鏈笌鍘熸彁鍙栧叏鏂囬暱搴︽瘮鍙婄己澶辫瘖鏂?- [ ] **METR-02**: **鍧楅暱搴﹁揪鏍囩巼**锛?00鈥?000 瀛楃鍗犳瘮缁熻
@@ -52,9 +52,9 @@
 | CHUNK-01 | Phase 2 | Done |
 | CHUNK-02 | Phase 2 | Done |
 | CHUNK-03 | Phase 2 | Done |
-| ADPT-01 | Phase 3 | Pending |
-| ADPT-02 | Phase 3 | Pending |
-| ADPT-03 | Phase 3 | Pending |
+| ADPT-01 | Phase 3 | Done |
+| ADPT-02 | Phase 3 | Done |
+| ADPT-03 | Phase 3 | Done |
 | METR-01 | Phase 4 | Pending |
 | METR-02 | Phase 4 | Pending |
 | METR-03 | Phase 4 | Pending |
@@ -75,4 +75,5 @@
 ---
 *Requirements defined: 2026-04-13*  
 *Last updated: 2026-04-13 after initial definition*
+
 

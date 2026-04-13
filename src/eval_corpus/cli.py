@@ -7,6 +7,7 @@ from typing import List, Optional
 
 import typer
 
+from eval_corpus.adapter_runner import run_adapter_on_files
 from eval_corpus.chunk_io import read_parsed_blocks_json, write_chunks_json
 from eval_corpus.chunker import chunk_blocks
 from eval_corpus.config import ConfigError, resolve_corpus_root
@@ -163,6 +164,31 @@ def chunk(
         f"min_chars={min_chars} max_chars={max_chars} overlap_ratio={overlap_ratio}",
         err=True,
     )
+
+
+@app.command("adapt")
+def adapt(
+    tool: str = typer.Option(..., "--tool", help="Adapter tool: paddle|glm|mineru"),
+    inputs: List[Path] = typer.Option(..., "--input", help="Input file path (repeatable)."),
+    fail_fast: bool = typer.Option(False, "--fail-fast", help="Stop on first error."),
+    debug: bool = typer.Option(False, "--debug", help="Include raw_error details."),
+    summary_out: Path | None = typer.Option(
+        None, "--summary-out", help="Optional path to write adapter run summary JSON."
+    ),
+) -> None:
+    """Run one adapter against multiple files with unified error summary."""
+    result = run_adapter_on_files(tool, inputs, fail_fast=fail_fast, debug=debug)
+    if summary_out is not None:
+        import json
+
+        summary_out.parent.mkdir(parents=True, exist_ok=True)
+        summary_out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    typer.secho(
+        f"tool={tool} files={len(inputs)} results={len(result['results'])} errors={len(result['errors'])}",
+        err=True,
+    )
+    if result["errors"] and fail_fast:
+        raise typer.Exit(1)
 
 
 def run() -> None:
