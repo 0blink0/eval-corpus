@@ -198,12 +198,13 @@ Source pattern: 项目现有 `chunk/adapt/stats` 命令结构。[VERIFIED: `D:/d
 |---|-------|---------|---------------|
 | A1 | 语义完整率首版可采用“规则自动评分 + 人工抽检登记”且不强依赖 LLM 在线接口 | Summary / Architecture | 若后续要求强制 LLM 自动裁判，需要补充依赖与成本评估 |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **METR-07 规则评分细则阈值是否在 Phase 4 锁定？**
-   - What we know: 已锁定“规则主导 + 固定抽样人工复核”。  
-   - What's unclear: 规则项权重、最小抽样量是否需固化为常量。  
-   - Recommendation: 在 04-02 计划中先锁定最小可行规则集并写入 README。
+1. **METR-07 规则评分细则阈值是否在 Phase 4 锁定？**  
+   **RESOLVED:** 在 Phase 4 锁定“最小可行规则集 + 固定抽样最小样本量”，并写入实现常量与 README。  
+   - 规则权重：首版采用等权重（便于可解释与复现），后续若调整需通过配置显式声明。  
+   - 抽样量：采用固定下限（例如每工具每批次至少 N 个样本）并与随机种子一起落盘。  
+   - 人工复核记录仅用于校准与审计，不覆盖自动规则得分原值。
 
 ## Environment Availability
 
