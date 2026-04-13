@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 — Not started
+Phase 1 — Executed (awaiting transition / Phase 2)
 
 ## Project Reference
 
