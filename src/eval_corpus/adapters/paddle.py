@@ -12,7 +12,13 @@ def _run_paddle_ocr(ocr: object, file_path: Path) -> list | None:
     """PaddleOCR v2 returns nested lists from ``ocr()``; v3+ uses ``predict()`` + OCRResult."""
     path = str(file_path)
     if hasattr(ocr, "predict"):
-        raw = ocr.predict(path)  # type: ignore[no-untyped-call]
+        try:
+            raw = ocr.predict(input=path)  # type: ignore[no-untyped-call]
+        except TypeError:
+            try:
+                raw = ocr.predict(path)  # type: ignore[no-untyped-call]
+            except TypeError:
+                raw = ocr.predict([path])  # type: ignore[no-untyped-call]
         if raw is None:
             return []
         pages_out: list[list] = []
