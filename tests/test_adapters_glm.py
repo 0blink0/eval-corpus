@@ -24,6 +24,7 @@ def test_glm_error_envelope_and_run_metadata(tmp_path: Path, monkeypatch: pytest
     f = tmp_path / "a.txt"
     f.write_text("abc", encoding="utf-8")
     monkeypatch.delenv("GLM_API_KEY", raising=False)
+    monkeypatch.delenv("ZHIPU_API_KEY", raising=False)
     adapter = GLMAdapter()
     with pytest.raises(AdapterError) as exc:
         adapter.parse_to_blocks(f, AdapterConfig(debug=False))

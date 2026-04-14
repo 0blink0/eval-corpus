@@ -44,6 +44,7 @@ def test_glm_in_runner_modes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
     f = tmp_path / "a.txt"
     f.write_text("abc", encoding="utf-8")
     monkeypatch.delenv("GLM_API_KEY", raising=False)
+    monkeypatch.delenv("ZHIPU_API_KEY", raising=False)
     out = run_adapter_on_files("glm", [f], fail_fast=False, debug=False)
     assert out["errors"][0]["stage"] == "parse"
 
@@ -52,6 +53,7 @@ def test_three_tool_runtime_metadata_and_modes(tmp_path: Path, monkeypatch: pyte
     f = tmp_path / "a.txt"
     f.write_text("abc", encoding="utf-8")
     monkeypatch.delenv("GLM_API_KEY", raising=False)
+    monkeypatch.delenv("ZHIPU_API_KEY", raising=False)
     for tool in ["paddle", "glm", "mineru"]:
         res = run_adapter_on_files(tool, [f], fail_fast=False, debug=True)
         meta = res["runtime_metadata"]
@@ -66,6 +68,7 @@ def test_cross_tool_minimal_fixture_acceptance(tmp_path: Path, monkeypatch: pyte
     scan.write_text("scan", encoding="utf-8")
     table.write_text("a|b", encoding="utf-8")
     monkeypatch.delenv("GLM_API_KEY", raising=False)
+    monkeypatch.delenv("ZHIPU_API_KEY", raising=False)
 
     files = [text, scan, table]
     for tool in ["paddle", "glm", "mineru"]:

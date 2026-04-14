@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import tempfile
 from pathlib import Path
@@ -68,12 +69,14 @@ class MinerUAdapter:
                 raw_error=repr(e) if config.debug else None,
             )
         try:
+            # Large PDFs exceed the default AdapterConfig timeout (30s); allow override via env.
+            timeout_sec = int(os.getenv("EVAL_MINERU_TIMEOUT_SEC", str(max(config.timeout_sec, 7200))))
             with tempfile.TemporaryDirectory(prefix="mineru-") as temp_out:
                 proc = subprocess.run(
                     ["mineru", "-p", str(file_path), "-o", temp_out],
                     capture_output=True,
                     text=True,
-                    timeout=config.timeout_sec,
+                    timeout=timeout_sec,
                     check=False,
                 )
                 if proc.returncode != 0:

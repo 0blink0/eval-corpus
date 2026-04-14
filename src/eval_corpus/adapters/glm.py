@@ -25,8 +25,11 @@ class GLMAdapter:
     def parse_to_blocks(self, file_path: Path, config: AdapterConfig) -> list[ParsedBlock]:
         if not file_path.exists():
             raise AdapterError(stage=AdapterStage.load, file=str(file_path), tool=self.tool_name, message="file not found")
-        if not os.getenv("GLM_API_KEY"):
+        api_key = os.getenv("GLM_API_KEY") or os.getenv("ZHIPU_API_KEY")
+        if not api_key:
             raise AdapterError(stage=AdapterStage.parse, file=str(file_path), tool=self.tool_name, message="missing GLM_API_KEY")
+        os.environ.setdefault("ZHIPU_API_KEY", api_key)
+        os.environ.setdefault("GLM_API_KEY", api_key)
         if file_path.suffix.lower() in {".txt", ".md", ".csv", ".json"}:
             try:
                 text = file_path.read_text(encoding="utf-8", errors="replace")
@@ -61,7 +64,10 @@ class GLMAdapter:
         try:
             import glmocr  # type: ignore
 
-            result = glmocr.parse(str(file_path))
+            try:
+                result = glmocr.parse(str(file_path), api_key=api_key)  # type: ignore[call-arg]
+            except TypeError:
+                result = glmocr.parse(str(file_path))
             text = ""
             for attr in ("markdown", "text", "content"):
                 value = getattr(result, attr, None)
