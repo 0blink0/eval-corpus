@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from eval_corpus.adapters.base import AdapterConfig, AdapterError, AdapterStage, RuntimeMetadata, ensure_lowest_semantics
+from eval_corpus.adapters.postprocess import ensure_metadata_and_table_hints, markdown_to_blocks
 from eval_corpus.ir_models import BlockType, ParsedBlock
 
 
@@ -71,16 +72,12 @@ class PaddleAdapter:
                     message="failed reading text input file",
                     raw_error=repr(e) if config.debug else None,
                 )
-            blocks = [
-                ParsedBlock(
-                    type=BlockType.paragraph,
-                    text=text.strip() or "[empty]",
-                    page=1,
-                    heading_path=[],
-                    parser_tool=self.tool_name,
-                    source_file=str(file_path),
-                )
-            ]
+            blocks = markdown_to_blocks(
+                text.strip() or "[empty]",
+                parser_tool=self.tool_name,
+                source_file=str(file_path),
+                page=1,
+            )
             try:
                 return ensure_lowest_semantics(blocks)
             except Exception as e:
@@ -127,7 +124,7 @@ class PaddleAdapter:
                         type=BlockType.paragraph,
                         text=text,
                         page=page_idx,
-                        heading_path=[],
+                        heading_path=["ROOT"],
                         parser_tool=self.tool_name,
                         source_file=str(file_path),
                     )
@@ -138,13 +135,13 @@ class PaddleAdapter:
                     type=BlockType.other,
                     text="[ocr-empty]",
                     page=1,
-                    heading_path=[],
+                    heading_path=["ROOT"],
                     parser_tool=self.tool_name,
                     source_file=str(file_path),
                 )
             ]
         try:
-            return ensure_lowest_semantics(blocks)
+            return ensure_lowest_semantics(ensure_metadata_and_table_hints(blocks))
         except Exception as e:
             raise AdapterError(
                 stage=AdapterStage.validate,

@@ -6,7 +6,8 @@ import os
 from pathlib import Path
 
 from eval_corpus.adapters.base import AdapterConfig, AdapterError, AdapterStage, RuntimeMetadata, ensure_lowest_semantics
-from eval_corpus.ir_models import BlockType, ParsedBlock
+from eval_corpus.adapters.postprocess import markdown_to_blocks
+from eval_corpus.ir_models import ParsedBlock
 
 
 class GLMAdapter:
@@ -41,16 +42,12 @@ class GLMAdapter:
                     message="failed reading text input file",
                     raw_error=repr(e) if config.debug else None,
                 )
-            blocks = [
-                ParsedBlock(
-                    type=BlockType.paragraph,
-                    text=text.strip() or "[empty]",
-                    page=1,
-                    heading_path=[],
-                    parser_tool=self.tool_name,
-                    source_file=str(file_path),
-                )
-            ]
+            blocks = markdown_to_blocks(
+                text.strip() or "[empty]",
+                parser_tool=self.tool_name,
+                source_file=str(file_path),
+                page=1,
+            )
             try:
                 return ensure_lowest_semantics(blocks)
             except Exception as e:
@@ -89,16 +86,12 @@ class GLMAdapter:
                 message="glm ocr parse failed",
                 raw_error=repr(e) if config.debug else None,
             )
-        blocks = [
-            ParsedBlock(
-                type=BlockType.paragraph,
-                text=text,
-                page=1,
-                heading_path=[],
-                parser_tool=self.tool_name,
-                source_file=str(file_path),
-            )
-        ]
+        blocks = markdown_to_blocks(
+            text,
+            parser_tool=self.tool_name,
+            source_file=str(file_path),
+            page=1,
+        )
         try:
             return ensure_lowest_semantics(blocks)
         except Exception as e:
