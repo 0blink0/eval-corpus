@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import re
 from typing import Iterable
 
@@ -9,6 +10,9 @@ from eval_corpus.ir_models import BlockType, ParsedBlock
 
 _TABLE_SEP_RE = re.compile(r"^\s*\|?(?:\s*:?-{3,}:?\s*\|)+\s*:?-{3,}:?\s*\|?\s*$")
 _HEADING_RE = re.compile(r"^\s{0,3}(#{1,6})\s+(.+?)\s*$")
+_HTML_TABLE_RE = re.compile(r"<table\b[^>]*>[\s\S]*?</table>", re.IGNORECASE)
+_HTML_ROW_RE = re.compile(r"<tr\b[^>]*>([\s\S]*?)</tr>", re.IGNORECASE)
+_HTML_CELL_RE = re.compile(r"<t[hd]\b[^>]*>([\s\S]*?)</t[hd]>", re.IGNORECASE)
 _ROOT_HEADING = "ROOT"
 
 
@@ -114,6 +118,61 @@ def markdown_to_blocks(
     flush_paragraph()
     flush_table()
     return blocks
+
+
+def matrix_to_pipe_markdown(rows: list[list[str]]) -> str:
+    """Render a 2D cell matrix as GitHub-style pipe markdown (header + separator + body)."""
+    normalized: list[list[str]] = []
+    for row in rows:
+        cells = [html.unescape(c).strip() for c in row]
+        if any(cells):
+            normalized.append(cells)
+    if not normalized:
+        return ""
+    width = max(len(r) for r in normalized)
+    padded = [r + [""] * (width - len(r)) for r in normalized]
+    header = padded[0]
+    sep = ["---"] * width
+    body = padded[1:]
+    lines = [
+        "| " + " | ".join(header) + " |",
+        "| " + " | ".join(sep) + " |",
+    ]
+    lines.extend("| " + " | ".join(r) + " |" for r in body)
+    return "\n".join(lines)
+
+
+def _html_fragment_to_pipe_markdown(fragment: str) -> str:
+    rows_raw = _HTML_ROW_RE.findall(fragment)
+    grid: list[list[str]] = []
+    for raw in rows_raw:
+        cells = _HTML_CELL_RE.findall(raw)
+        row = [re.sub(r"<[^>]+>", "", c) for c in cells]
+        row = [html.unescape(c).strip() for c in row]
+        if any(row):
+            grid.append(row)
+    return matrix_to_pipe_markdown(grid)
+
+
+def extract_html_tables_as_markdown(text: str) -> tuple[str, list[str]]:
+    """Strip ``<table>...</table>`` regions and return cleaned text plus pipe-markdown tables.
+
+    MinerU / GLM-OCR often emit HTML tables; :func:`markdown_to_blocks` would otherwise
+    keep them as plain paragraphs and METR-04 sees zero table blocks.
+    """
+    if not text or "<table" not in text.lower():
+        return text, []
+    tables: list[str] = []
+
+    def _sub(m: re.Match[str]) -> str:
+        md = _html_fragment_to_pipe_markdown(m.group(0))
+        if md.strip():
+            tables.append(md.strip())
+        return "\n"
+
+    cleaned = _HTML_TABLE_RE.sub(_sub, text)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
+    return cleaned, tables
 
 
 def ensure_metadata_and_table_hints(blocks: Iterable[ParsedBlock]) -> list[ParsedBlock]:

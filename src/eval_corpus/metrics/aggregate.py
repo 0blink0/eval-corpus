@@ -22,27 +22,33 @@ from eval_corpus.metrics.models import MetricThreshold, judge_level
 MetricMap = dict[str, dict[str, Any]]
 
 
-def _metric_functions() -> dict[str, Any]:
+def _calculate_metrics_for_file(
+    chunks: list[Chunk],
+    *,
+    ir_table_block_count: int | None = None,
+) -> MetricMap:
+    """Compute per-file metrics.
+
+    ``ir_table_block_count``: number of ``ParsedBlock`` with ``type==table`` before chunking.
+    When set, METR-04 denominator follows IR (detects chunking/regression vs adapter output).
+    When omitted, METR-04 falls back to counting table-bearing chunks (legacy, tautological).
+    """
+    exp04 = (
+        ir_table_block_count
+        if ir_table_block_count is not None
+        else sum(1 for c in chunks if any(bt.value == "table" for bt in c.block_types))
+    )
     return {
-        "METR-01": lambda chunks: compute_metric_01(
+        "METR-01": compute_metric_01(
             chunks, golden_chars=max(sum(len(c.text) for c in chunks), 1)
-        ),
-        "METR-02": lambda chunks: compute_metric_02(chunks),
-        "METR-03": lambda chunks: compute_metric_03(chunks),
-        "METR-04": lambda chunks: compute_metric_04(
-            chunks,
-            expected_table_blocks=sum(
-                1 for c in chunks if any(bt.value == "table" for bt in c.block_types)
-            ),
-        ),
-        "METR-05": lambda chunks: compute_metric_05(chunks),
-        "METR-06": lambda chunks: compute_metric_06(chunks),
-        "METR-07": lambda chunks: compute_metric_07_semantic_completeness(chunks),
+        ).model_dump(),
+        "METR-02": compute_metric_02(chunks).model_dump(),
+        "METR-03": compute_metric_03(chunks).model_dump(),
+        "METR-04": compute_metric_04(chunks, expected_table_blocks=exp04).model_dump(),
+        "METR-05": compute_metric_05(chunks).model_dump(),
+        "METR-06": compute_metric_06(chunks).model_dump(),
+        "METR-07": compute_metric_07_semantic_completeness(chunks).model_dump(),
     }
-
-
-def _calculate_metrics_for_file(chunks: list[Chunk]) -> MetricMap:
-    return {name: fn(chunks).model_dump() for name, fn in _metric_functions().items()}
 
 
 def _resolve_metrics_for_group(
@@ -50,6 +56,8 @@ def _resolve_metrics_for_group(
     source_file: str,
     parser_tool: str,
     file_chunks: list[Chunk],
+    *,
+    ir_table_block_count: int | None = None,
 ) -> MetricMap:
     """Resolve metrics for one (file, tool) group safely.
 
@@ -58,11 +66,11 @@ def _resolve_metrics_for_group(
     keys like (source_file, parser_tool) or "source_file::parser_tool".
     """
     if metrics_template is None:
-        return _calculate_metrics_for_file(file_chunks)
+        return _calculate_metrics_for_file(file_chunks, ir_table_block_count=ir_table_block_count)
 
     if isinstance(metrics_template, dict):
         if all(str(key).startswith("METR-") for key in metrics_template.keys()):
-            return _calculate_metrics_for_file(file_chunks)
+            return _calculate_metrics_for_file(file_chunks, ir_table_block_count=ir_table_block_count)
 
         tuple_key = (source_file, parser_tool)
         str_key = f"{source_file}::{parser_tool}"
@@ -71,7 +79,7 @@ def _resolve_metrics_for_group(
         if str_key in metrics_template:
             return deepcopy(metrics_template[str_key])
 
-    return _calculate_metrics_for_file(file_chunks)
+    return _calculate_metrics_for_file(file_chunks, ir_table_block_count=ir_table_block_count)
 
 
 def build_per_file_metrics(
@@ -79,6 +87,7 @@ def build_per_file_metrics(
     metrics_template: dict[Any, MetricMap] | MetricMap | None = None,
     *,
     errors: list[dict[str, Any]] | None = None,
+    ir_table_counts: dict[tuple[str, str], int] | None = None,
 ) -> list[dict[str, Any]]:
     grouped: dict[tuple[str, str], list[Chunk]] = defaultdict(list)
     for chunk in chunks:
@@ -91,8 +100,13 @@ def build_per_file_metrics(
 
     per_file: list[dict[str, Any]] = []
     for (source_file, parser_tool), file_chunks in sorted(grouped.items()):
+        ir_n = ir_table_counts.get((source_file, parser_tool)) if ir_table_counts else None
         metrics = _resolve_metrics_for_group(
-            metrics_template, source_file, parser_tool, file_chunks
+            metrics_template,
+            source_file,
+            parser_tool,
+            file_chunks,
+            ir_table_block_count=ir_n,
         )
         not_applicable = sum(
             1 for metric in metrics.values() if metric.get("raw_value", None) is None

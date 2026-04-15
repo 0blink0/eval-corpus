@@ -53,3 +53,20 @@ def test_glm_extracts_tables_from_structured_json(tmp_path: Path, monkeypatch: p
     f.write_bytes(b"%PDF-1.4\n%fake\n")
     blocks = GLMAdapter().parse_to_blocks(f, AdapterConfig(debug=True))
     assert any(b.type == BlockType.table for b in blocks)
+
+
+def test_glm_extracts_html_embedded_in_markdown(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    class _FakeResult:
+        markdown = '说明<table><tr><td>A</td><td>B</td></tr><tr><td>1</td><td>2</td></tr></table>尾部'
+
+        def to_json(self) -> dict[str, object]:
+            return {}
+
+    fake_mod = types.SimpleNamespace(parse=lambda _p, api_key=None: _FakeResult())
+    monkeypatch.setitem(sys.modules, "glmocr", fake_mod)
+    monkeypatch.setenv("GLM_API_KEY", "dummy")
+
+    f = tmp_path / "b.pdf"
+    f.write_bytes(b"%PDF-1.4\n%fake\n")
+    blocks = GLMAdapter().parse_to_blocks(f, AdapterConfig(debug=True))
+    assert any(b.type == BlockType.table and "A" in b.text for b in blocks)

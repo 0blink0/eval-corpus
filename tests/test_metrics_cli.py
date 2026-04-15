@@ -62,12 +62,11 @@ def test_metrics_cli_success(tmp_path: Path) -> None:
 
 
 def test_metrics_cli_missing_input_path() -> None:
-    # Separate stderr capture: typer.secho(..., err=True) may not appear in stdout
-    # on some platforms when stderr is merged with stdout in CliRunner.
-    runner_sep = CliRunner(mix_stderr=False)
-    result = runner_sep.invoke(
+    runner = CliRunner()
+    result = runner.invoke(
         app,
         ["metrics", "--input", "not-found.json", "--out", "out.json"],
     )
     assert result.exit_code == 2
-    assert "Input file not found" in result.stderr
+    combined = (result.stdout or "") + (getattr(result, "stderr", None) or "")
+    assert "Input file not found" in combined

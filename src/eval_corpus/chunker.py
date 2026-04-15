@@ -82,6 +82,9 @@ def _segment_meta(bs: list[ParsedBlock]) -> tuple[str, int | None, list[str], st
     heading_path = next((b.heading_path for b in reversed(bs) if b.heading_path), [])
     pages = [b.page for b in bs if b.page is not None]
     page = min(pages) if pages else None
+    if page is None and bs:
+        # Whole-document OCR often omits per-page layout; metrics (METR-06) need a page.
+        page = 1
     page_span = (min(pages), max(pages)) if len(pages) >= 2 else None
     block_types = [b.type for b in bs]
     return source_file, page, heading_path, parser_tool, page_span, block_types

@@ -9,7 +9,7 @@ from typing import Any
 from pydantic import TypeAdapter
 
 from eval_corpus.chunker import chunk_blocks
-from eval_corpus.ir_models import ChunkConfig, ParsedBlock
+from eval_corpus.ir_models import BlockType, ChunkConfig, ParsedBlock
 from eval_corpus.metrics.aggregate import (
     build_overall_metrics,
     build_per_file_metrics,
@@ -25,14 +25,23 @@ def read_adapter_summary_json(path: Path) -> dict[str, Any]:
 
 def build_metrics_artifact(adapter_summary: dict[str, Any]) -> dict[str, Any]:
     runtime_metadata = dict(adapter_summary.get("runtime_metadata", {}))
-    all_chunks = []
+    all_chunks: list = []
+    ir_table_counts: dict[tuple[str, str], int] = {}
     for item in adapter_summary.get("results", []):
         blocks = _PARSED_BLOCKS_ADAPTER.validate_python(item.get("blocks", []))
+        if blocks:
+            file_key = blocks[0].source_file
+            parser_tool = next(
+                (b.parser_tool for b in blocks if b.parser_tool and b.parser_tool != "unknown"),
+                blocks[0].parser_tool,
+            )
+            ir_table_counts[(file_key, parser_tool)] = sum(1 for b in blocks if b.type == BlockType.table)
         all_chunks.extend(chunk_blocks(blocks, ChunkConfig()))
 
     per_file = build_per_file_metrics(
         all_chunks,
         errors=adapter_summary.get("errors", []),
+        ir_table_counts=ir_table_counts,
     )
     per_tool = build_per_tool_metrics(per_file)
     overall = build_overall_metrics(

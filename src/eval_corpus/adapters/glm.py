@@ -7,7 +7,12 @@ import os
 from pathlib import Path
 
 from eval_corpus.adapters.base import AdapterConfig, AdapterError, AdapterStage, RuntimeMetadata, ensure_lowest_semantics
-from eval_corpus.adapters.postprocess import markdown_to_blocks
+from eval_corpus.adapters.postprocess import (
+    ensure_metadata_and_table_hints,
+    extract_html_tables_as_markdown,
+    markdown_to_blocks,
+    matrix_to_pipe_markdown,
+)
 from eval_corpus.ir_models import BlockType, ParsedBlock
 
 
@@ -25,10 +30,16 @@ def _extract_table_texts(payload: object) -> list[str]:
                     table = _rows_to_markdown(value)
                     if table:
                         found.append(table)
+                elif isinstance(value, str) and "<table" in value.lower():
+                    _, extra = extract_html_tables_as_markdown(value)
+                    found.extend(extra)
                 walk(value)
         elif isinstance(node, list):
             for item in node:
                 walk(item)
+        elif isinstance(node, str) and "<table" in node.lower():
+            _, extra = extract_html_tables_as_markdown(node)
+            found.extend(extra)
 
     walk(payload)
     # keep order while deduplicating
@@ -49,7 +60,9 @@ def _coerce_table_values(value: object) -> list[str]:
                 elif isinstance(item.get("text"), str):
                     out.append(str(item["text"]))
                 elif isinstance(item.get("html"), str):
-                    out.append(str(item["html"]))
+                    h = str(item["html"])
+                    _, hx = extract_html_tables_as_markdown(h)
+                    out.extend(hx if hx else [h])
                 rows = item.get("rows") or item.get("cells")
                 if isinstance(rows, list):
                     table = _rows_to_markdown(rows)
@@ -72,19 +85,7 @@ def _rows_to_markdown(rows: list[object]) -> str:
             cells = [str(c).strip() for c in row]
             if any(cells):
                 normalized.append(cells)
-    if not normalized:
-        return ""
-    width = max(len(r) for r in normalized)
-    padded = [r + [""] * (width - len(r)) for r in normalized]
-    header = padded[0]
-    sep = ["---"] * width
-    body = padded[1:]
-    lines = [
-        "| " + " | ".join(header) + " |",
-        "| " + " | ".join(sep) + " |",
-    ]
-    lines.extend("| " + " | ".join(r) + " |" for r in body)
-    return "\n".join(lines)
+    return matrix_to_pipe_markdown(normalized)
 
 
 class GLMAdapter:
@@ -110,7 +111,7 @@ class GLMAdapter:
         os.environ.setdefault("GLM_API_KEY", api_key)
         if file_path.suffix.lower() in {".txt", ".md", ".csv", ".json"}:
             try:
-                text = file_path.read_text(encoding="utf-8", errors="replace")
+                raw = file_path.read_text(encoding="utf-8", errors="replace")
             except Exception as e:
                 raise AdapterError(
                     stage=AdapterStage.parse,
@@ -119,14 +120,26 @@ class GLMAdapter:
                     message="failed reading text input file",
                     raw_error=repr(e) if config.debug else None,
                 )
+            body, html_tabs = extract_html_tables_as_markdown(raw.strip() or "[empty]")
             blocks = markdown_to_blocks(
-                text.strip() or "[empty]",
+                body,
                 parser_tool=self.tool_name,
                 source_file=str(file_path),
                 page=1,
             )
+            for t in html_tabs:
+                blocks.append(
+                    ParsedBlock(
+                        type=BlockType.table,
+                        text=t,
+                        page=1,
+                        heading_path=["ROOT"],
+                        parser_tool=self.tool_name,
+                        source_file=str(file_path),
+                    )
+                )
             try:
-                return ensure_lowest_semantics(blocks)
+                return ensure_lowest_semantics(ensure_metadata_and_table_hints(blocks))
             except Exception as e:
                 raise AdapterError(
                     stage=AdapterStage.validate,
@@ -166,7 +179,10 @@ class GLMAdapter:
             text = text.strip()
             if not text:
                 text = "[ocr-empty]"
+            html_extra: list[str] = []
+            text, html_extra = extract_html_tables_as_markdown(text)
             table_texts = _extract_table_texts(structured_payload) if structured_payload is not None else []
+            table_texts = [*table_texts, *html_extra]
         except Exception as e:
             raise AdapterError(
                 stage=AdapterStage.parse,
@@ -175,12 +191,15 @@ class GLMAdapter:
                 message="glm ocr parse failed",
                 raw_error=repr(e) if config.debug else None,
             )
-        blocks = markdown_to_blocks(
-            text,
-            parser_tool=self.tool_name,
-            source_file=str(file_path),
-            page=1,
-        )
+        if (not text.strip() or text == "[ocr-empty]") and table_texts:
+            blocks: list[ParsedBlock] = []
+        else:
+            blocks = markdown_to_blocks(
+                text,
+                parser_tool=self.tool_name,
+                source_file=str(file_path),
+                page=1,
+            )
         for t in table_texts:
             blocks.append(
                 ParsedBlock(
@@ -193,7 +212,7 @@ class GLMAdapter:
                 )
             )
         try:
-            return ensure_lowest_semantics(blocks)
+            return ensure_lowest_semantics(ensure_metadata_and_table_hints(blocks))
         except Exception as e:
             raise AdapterError(
                 stage=AdapterStage.validate,
